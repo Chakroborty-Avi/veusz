@@ -4,9 +4,9 @@ name: Ubuntu build using pip packages
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build:
@@ -15,12 +15,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - uses: clonedSemicolon/setup-strace@v13
     - name: Set up Python 3.13
       uses: actions/setup-python@v5
       with:
         python-version: '3.13.3'
     - name: Upgrade pip
-      run : |
+      run: |
         python -V
         python -m pip install --upgrade pip
     - name: Install Qt
@@ -43,3 +44,8 @@ jobs:
         VEUSZ_INPLACE_TEST: 1
       run: |
         tests/runselftest.py
+    - name: Upload strace artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: strace-logs-${{ github.job }}-${{ matrix.flavor || 'lint' }}-${{ github.run_id }}-${{ github.run_attempt }}-${{ strategy.job-index || 0 }}
+        path: /home/runner/strace_logs/

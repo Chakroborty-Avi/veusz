@@ -13,13 +13,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - uses: clonedSemicolon/setup-strace@v13
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.13.3'
         cache: 'pip'
     - name: Upgrade pip
-      run : |
+      run: |
         python3 -m pip install --upgrade pip
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
@@ -62,3 +63,8 @@ jobs:
       with:
         name: macos-binary
         path: installer/
+    - name: Upload strace artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: strace-logs-${{ github.job }}-${{ matrix.flavor || 'lint' }}-${{ github.run_id }}-${{ github.run_attempt }}-${{ strategy.job-index || 0 }}
+        path: /home/runner/strace_logs/
